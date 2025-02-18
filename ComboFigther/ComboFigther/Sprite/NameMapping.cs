@@ -19,6 +19,8 @@ namespace ComboFigther
         public const string IDLE_RIGHT = "IdleRight";
         public const string IDLE_LEFT = "IdleLeft";
 
+        public const string ATTACK_ANIMATION = "attackAnimation";
+
         public const string SHOOT_UP = "shootUp";
         public const string SHOOT_DOWN = "shootDown";
         public const string SHOOT_RIGHT = "shootRight";

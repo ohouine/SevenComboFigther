@@ -30,8 +30,9 @@ namespace ComboFigther.Sprite
 
         public Texture2D texture2D;
 
-        public int frameWidth { get => Convert.ToInt32(Math.Floor(_spriteFrames[_selectedSpriteFrame].Width * _scale)); set => _frameWidth = value; }
-        public int frameHeight { get => Convert.ToInt32(Math.Floor(_spriteFrames[_selectedSpriteFrame].Height * _scale)); set => _frameHeight = value; }
+        public int frameWidth { get => Convert.ToInt32(Math.Floor(SpriteFrames[_selectedSpriteFrame].Width * _scale)); set => _frameWidth = value; }
+        public int frameHeight { get => Convert.ToInt32(Math.Floor(SpriteFrames[_selectedSpriteFrame].Height * _scale)); set => _frameHeight = value; }
+        public Rectangle[] SpriteFrames { get => _spriteFrames; set => _spriteFrames = value; }
 
         public AnimeSprite(Texture2D texture2D, int nbFrame, int holdFrmTime, int height, int width, int row, float scale = 1, bool flip = false)
         {
@@ -43,7 +44,7 @@ namespace ComboFigther.Sprite
             _frameHeight = height;
 
             _threshold = holdFrmTime;
-            _spriteFrames = new Rectangle[_nbFrames];
+            SpriteFrames = new Rectangle[_nbFrames];
             _ypositionOnSpriteBatsh = row * height;
 
             _flip = flip;
@@ -63,7 +64,7 @@ namespace ComboFigther.Sprite
                 Rectangle preciseFrame = FindPreciseRectangle(textureData, frame, texture2D.Width);
 
                 // Replace the original rectangle with the precise one
-                _spriteFrames[i] = preciseFrame;
+                SpriteFrames[i] = preciseFrame;
             }
         }
         /// <summary>
@@ -115,7 +116,7 @@ namespace ComboFigther.Sprite
         {
             if (_time >= _threshold)
             {
-                if (_selectedSpriteFrame == _spriteFrames.Length - 1)
+                if (_selectedSpriteFrame == SpriteFrames.Length - 1)
                 {
                     _selectedSpriteFrame = 0;
                 }
@@ -151,7 +152,18 @@ namespace ComboFigther.Sprite
 
             //loop this for all sprites!
             float rotation = _flip ? 180 : 0;
-            spriteBatch.Draw(texture2D, position, _spriteFrames[_selectedSpriteFrame], Color.White, 0, new Vector2(0, 0), new Vector2(_scale, _scale), SpriteEffects.None, 1);
+            spriteBatch.Draw(texture2D, position, SpriteFrames[_selectedSpriteFrame], Color.White, 0, new Vector2(0, 0), new Vector2(_scale, _scale), SpriteEffects.None, 1);
+        }
+
+        public static Texture2D GetSubTexture(Texture2D texture, Rectangle sourceRect, GraphicsDevice graphicsDevice)
+        {
+            Texture2D croppedTexture = new Texture2D(graphicsDevice, sourceRect.Width, sourceRect.Height);
+            Color[] data = new Color[sourceRect.Width * sourceRect.Height];
+
+            texture.GetData(0, sourceRect, data, 0, data.Length);
+            croppedTexture.SetData(data);
+
+            return croppedTexture;
         }
 
     }

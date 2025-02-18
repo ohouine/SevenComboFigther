@@ -7,102 +7,95 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using SharpDX.Direct2D1;
 using SpriteBatch = Microsoft.Xna.Framework.Graphics.SpriteBatch;
-using System.Diagnostics;
+using ComboFigther.Attacks;
+using ComboFigther.Characters;
+using ComboFigther.Decor;
 
-namespace ComboFigther.Character
+namespace ComboFigther.Utility
 {
     class Manager
     {
-        public static List<Character> characters = new List<Character>();
-        public static List<Player> players = new List<Player>();
-        //public static List<Enemy> enemys = new List<Enemy>();
-        //public static List<Slime> slimes = new List<Slime>();
-        //public static List<Slime> toAddSlime = new List<Slime>();
-        //public static List<Projectile> projectiles = new List<Projectile>();
-        //public static List<Obstacle> obstacles = new List<Obstacle>();
+        public static List<Character> Characters = new List<Character>();
+        public static Player Player;
+        public static List<Enemy> Enemys = new List<Enemy>();
+        public static List<Slime> Slimes = new List<Slime>();
+        public static List<Slime> ToAddSlime = new List<Slime>();
+        public static List<Projectile> Projectiles = new List<Projectile>();
+        public static List<Obstacle> Obstacles = new List<Obstacle>();
 
-        // Update
+        ///////////////////////////////////////////////// Update
         public void UpdateCharacter(GameTime gameTime)
         {
             UpdatePlayer(gameTime);
-            //UpdateEnemy(gameTime);
+            UpdateEnemy(gameTime);
 
-            characters.RemoveAll(character => character.isDead);
+            Characters.RemoveAll(character => character.IsDead);
         }
 
         void UpdatePlayer(GameTime gameTime)
         {
-            foreach (var player in players)
+            Player.Update(gameTime);
+            foreach (var attack in Player.Attacks)
             {
-                player.Update(gameTime);
+                attack.Update(gameTime);
             }
         }
 
-        //public void UpdateEnemy(GameTime gameTime)
-        //{
-        //    UpdateSlime(gameTime);
+        public void UpdateEnemy(GameTime gameTime)
+        {
+            UpdateSlime(gameTime);
 
-        //    enemys.RemoveAll(enemy => enemy.isDead);
+            Enemys.RemoveAll(enemy => enemy.IsDead);
 
-        //}
+        }
 
-        //public void UpdateSlime(GameTime gameTime)
-        //{
-        //    foreach (var slime in slimes)
-        //    {
-        //        slime.Update(gameTime);
-        //    }
+        public void UpdateSlime(GameTime gameTime)
+        {
+            foreach (var slime in Slimes)
+            {
+                slime.Update(gameTime);
+            }
 
-        //    slimes.RemoveAll(slime => slime.isDead);
+            Slimes.RemoveAll(slime => slime.IsDead);
 
-        //    //Debug.WriteLine(slimes.Count);
-        //    //Debug.WriteLine(enemys.Count);
-        //    //Debug.WriteLine(characters.Count);
-        //    //        Debug.WriteLine("--------------------------------");
+            Slimes = Slimes.Concat(ToAddSlime).ToList();
+            Enemys = Enemys.Concat(ToAddSlime).ToList();
+            Characters = Characters.Concat(ToAddSlime).ToList();
+            ToAddSlime.Clear();
+        }
 
+        public void UpdateProjectile(GameTime gameTime)
+        {
+            foreach (var projectile in Projectiles)
+            {
+                projectile.Update(gameTime);
+            }
+            Projectiles.RemoveAll(proj => proj.destroyed);
+        }
 
-        //    slimes = slimes.Concat(toAddSlime).ToList();
-        //    enemys = enemys.Concat(toAddSlime).ToList();
-        //    characters = characters.Concat(toAddSlime).ToList();
-        //    toAddSlime.Clear();
-        //}
-
-        //public void UpdateProjectile(GameTime gameTime)
-        //{
-        //    foreach (var projectile in projectiles)
-        //    {
-        //        projectile.Update(gameTime);
-        //    }
-        //    projectiles.RemoveAll(proj => proj.destroyed);
-        //}
-
-        //  Draw
+        /////////////////////////////////////////////////  Draw
         public void DrawCharacter(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            foreach (var character in characters)
+            foreach (var character in Characters)
             {
                 character.Draw(gameTime, spriteBatch);
-
             }
         }
 
-        //public void DrawProjectile(GameTime gameTime, SpriteBatch spriteBatch)
-        //{
-        //    foreach (var projectile in projectiles)
-        //    {
-        //        projectile.Draw(gameTime, spriteBatch);
-        //    }
-        //}
+        public void DrawProjectile(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            foreach (var projectile in Projectiles)
+            {
+                projectile.Draw(gameTime, spriteBatch);
+            }
+        }
 
-        //public void DrawObstacle(GameTime gameTime, SpriteBatch spriteBatch)
-        //{
-        //    foreach (var obstacle in obstacles)
-        //    {
-        //        if (obstacle.existInRoom)
-        //        {
-        //            obstacle.Draw(gameTime, spriteBatch);
-        //        }
-        //    }
-        //}
+        public void DrawObstacle(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            foreach (var obstacle in Obstacles)
+            {
+                obstacle.Draw(gameTime, spriteBatch);
+            }
+        }
     }
 }
